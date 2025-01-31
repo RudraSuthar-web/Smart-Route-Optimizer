@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Route Optimizer</title>
+    <link rel="stylesheet" href="/second page/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Smart Route Optimizer</h1>
+        
+        <form id="optimizerForm">
+            <div class="section">
+                <h2 class="section-title">Store Location</h2>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="storeLat">Store Latitude</label>
+                        <input type="number" id="storeLat" step="any" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="storeLong">Store Longitude</label>
+                        <input type="number" id="storeLong" step="any" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Delivery Assumptions</h2>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="travelTime">Travel Time per KM (minutes)</label>
+                        <input type="number" id="travelTime" value="5" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="deliveryTime">Delivery Time per Shipment (minutes)</label>
+                        <input type="number" id="deliveryTime" value="10" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Data Files</h2>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="shipmentsFile">Shipments Data (Excel)</label>
+                        <input type="file" id="shipmentsFile" accept=".xlsx,.xls" required>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button type="submit"  class="submit-section">Submit</button>
+        </div>
+        </form>
+        <div>
+        <a href="/prototype 2/output.html"><button>Generate Optimized Routes</button></a>
+    </div>
+        <!-- <div id="successMessage" class="success-message">
+            Form submitted successfully! Processing your request...
+        </div> -->
+    </div>
+
+    <script src="/second page/script.js"></script>
+</body>
+</html>

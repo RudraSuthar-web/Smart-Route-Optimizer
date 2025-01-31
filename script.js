@@ -20,6 +20,6 @@ document.querySelectorAll('.stat').forEach(stat => {
 });
 
 // Add button click handler
-document.querySelector('.btn').addEventListener('click', () => {
-    alert('Get started clicked! Add your custom action here.');
-});
+// document.querySelector('.btn').addEventListener('click', () => {
+//     alert('Get started clicked! Add your custom action here.');
+// });

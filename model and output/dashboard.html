@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartRoute Optimizer Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        #map { height: 500px; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-6 text-center">SmartRoute Optimizer Results</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white shadow-lg rounded-lg p-4">
+                <h2 class="text-xl font-semibold mb-4">Delivery Route Map</h2>
+                <div id="map"></div>
+            </div>
+            
+            <div class="bg-white shadow-lg rounded-lg p-4">
+                <h2 class="text-xl font-semibold mb-4">Trip Details</h2>
+                <div id="tripTable" class="overflow-x-auto"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Simulated Trip Data (replace with actual data from Python)
+            const trips = ${TRIP_DATA_JSON};
+            const storeLocation = ${STORE_LOCATION_JSON};
+
+            // Create Map
+            const map = L.map('map').setView([storeLocation.latitude, storeLocation.longitude], 10);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Add Store Marker
+            L.marker([storeLocation.latitude, storeLocation.longitude], {
+                icon: L.divIcon({
+                    className: 'bg-red-500 text-white p-2 rounded-full',
+                    html: '🏢',
+                    iconSize: [40, 40]
+                })
+            }).addTo(map)
+            .bindPopup('Store Location');
+
+            // Color palette for trips
+            const colors = ['blue', 'green', 'purple', 'orange', 'red'];
+
+            // Render Trips on Map
+            trips.forEach((trip, index) => {
+                const routeCoords = [
+                    [storeLocation.latitude, storeLocation.longitude],
+                    ...trip.shipments.map(s => [s.latitude, s.longitude]),
+                    [storeLocation.latitude, storeLocation.longitude]
+                ];
+
+                L.polyline(routeCoords, {
+                    color: colors[index % colors.length],
+                    weight: 3
+                }).addTo(map);
+
+                // Add markers for each shipment
+                trip.shipments.forEach(shipment => {
+                    L.marker([shipment.latitude, shipment.longitude]).addTo(map)
+                        .bindPopup(`Shipment ID: ${shipment.id}<br>Time Slot: ${shipment.timeSlot}`);
+                });
+            });
+
+            // Render Trip Table
+            const tableHTML = `
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="border p-2">Trip ID</th>
+                            <th class="border p-2">Shipments</th>
+                            <th class="border p-2">Vehicle Type</th>
+                            <th class="border p-2">MST Distance</th>
+                            <th class="border p-2">Trip Time</th>
+                            <th class="border p-2">Capacity Utilization</th>
+                            <th class="border p-2">Time Validation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${trips.map(trip => `
+                            <tr class="hover:bg-gray-100">
+                                <td class="border p-2">${trip.tripId}</td>
+                                <td class="border p-2">${trip.shipments.map(s => s.id).join(', ')}</td>
+                                <td class="border p-2">${trip.vehicleType}</td>
+                                <td class="border p-2">${trip.mstDistance} km</td>
+                                <td class="border p-2">${trip.tripTime}</td>
+                                <td class="border p-2">${trip.capacityUtilization}%</td>
+                                <td class="border p-2">${trip.timeValidation}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('tripTable').innerHTML = tableHTML;
+        });
+    </script>
+</body>
+</html>
